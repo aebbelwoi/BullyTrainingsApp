@@ -1,6 +1,6 @@
 {
-  "name": "Bullie Trainings App",
-  "short_name": "BullieApp",
+  "name": "Bully Trainings App",
+  "short_name": "BullyApp",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
