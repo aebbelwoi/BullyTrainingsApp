@@ -1,0 +1,9 @@
+{
+  "name": "Bullie Trainings App",
+  "short_name": "BullieApp",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "description": "Trainiere deine Reaktion für den Bully mit Zufalls-Timing und Pfiff.",
+  "lang": "de-DE"
+}

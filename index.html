@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Bullie Trainings App</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input {
+      margin: 5px;
+      padding: 8px;
+      width: 60px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bullie Trainings App</h1>
+  <p>Min Zeit (Sek): <input type="number" id="minTime" value="3"></p>
+  <p>Max Zeit (Sek): <input type="number" id="maxTime" value="7"></p>
+  <p>Cooldown (Sek): <input type="number" id="cooldown" value="3"></p>
+  <p>Wiederholungen: <input type="number" id="reps" value="10"></p>
+  <button onclick="startTrainer()">Start</button>
+  <button onclick="stopTrainer()">Stopp</button>
+  <p id="status"></p>
+
+  <audio id="whistle" src="referee-whistle-blow-gymnasium-6320.mp3"></audio>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+
+    let running = false;
+    let currentTimeout;
+
+    function getRandomTime(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    async function startTrainer() {
+      const min = parseFloat(document.getElementById("minTime").value);
+      const max = parseFloat(document.getElementById("maxTime").value);
+      const cooldown = parseFloat(document.getElementById("cooldown").value);
+      const reps = parseInt(document.getElementById("reps").value);
+      const whistle = document.getElementById("whistle");
+      const status = document.getElementById("status");
+      running = true;
+      status.textContent = "Läuft...";
+
+      for (let i = 0; i < reps && running; i++) {
+        const waitTime = getRandomTime(min, max);
+        status.textContent = `Warte auf Pfiff ${i + 1} / ${reps} in ${waitTime.toFixed(1)} Sek.`;
+        await new Promise(r => currentTimeout = setTimeout(r, waitTime * 1000));
+        if (!running) break;
+        whistle.play();
+        status.textContent = `Pfiff ${i + 1}! Cooldown...`;
+        await new Promise(r => currentTimeout = setTimeout(r, cooldown * 1000));
+      }
+
+      status.textContent = running ? "Fertig!" : "Abgebrochen.";
+      running = false;
+    }
+
+    function stopTrainer() {
+      running = false;
+      clearTimeout(currentTimeout);
+      document.getElementById("status").textContent = "Gestoppt.";
+    }
+  </script>
+</body>
+</html>
